@@ -41,11 +41,14 @@ async def printConsoleLogs():
         comments = list(comments)
         input_ids = []
         attention_masks = []
-        model_path = '/Users/josh/Documents/GitHub/Tiktok-OCR/model'
+        model_path = './model'
         tokenizer = BertTokenizer.from_pretrained('digitalepidemiologylab/covid-twitter-bert-v2', do_lower_case=True)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         modelog = BertForSequenceClassification.from_pretrained("digitalepidemiologylab/covid-twitter-bert-v2",
                                                               num_labels=2)
         modelnew = BertForSequenceClassification.from_pretrained(model_path, num_labels=2)
+        modelog.to(device)
+        modelnew.to(device)
         comments.insert(0, row['text'])
 
         comments = [pp.tokenize(text) for text in comments]

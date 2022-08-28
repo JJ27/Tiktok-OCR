@@ -29,7 +29,7 @@ async def printConsoleLogs():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_experimental_option('debuggerAddress', 'localhost:9515')
     driver = webdriver.Chrome(options=chrome_options, desired_capabilities=d)
-    df = pd.read_csv('tiktok-metas-pre.csv')
+    df = pd.read_csv('tiktok-metas.csv')
     df = df.reset_index(drop=True)
     for index,row in tqdm(df.iterrows()):
         driver.get(row['webVideoUrl'])

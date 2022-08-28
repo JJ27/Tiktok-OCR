@@ -159,7 +159,7 @@ async def printConsoleLogs():
         weights = [0.6, 0.4]
         total = numpy.average(totals, weights=weights)
         val = -1
-        if(total > 0.35 & total < 0.65):
+        if(total > 0.35 and total < 0.65):
             val = 1
         elif(total > 0.65):
             val = 2

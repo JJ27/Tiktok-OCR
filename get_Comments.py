@@ -164,7 +164,7 @@ async def printConsoleLogs():
         elif(total > 0.65):
             val = 2
         else:
-            val = 1
+            val = 0
         row['label'] = val
     pd.write_csv(df, 'data/test_labels.csv')
 

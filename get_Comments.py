@@ -109,7 +109,7 @@ async def printConsoleLogs():
         # Predict
         for batch in tqdm(prediction_dataloader, desc="Predicting", colour="GREEN"):
             # Add batch to GPU
-            batch = tuple(t.to(torch.device("cpu")) for t in batch)
+            batch = tuple(t.to(device) for t in batch)
 
             # Unpack the inputs from our dataloader
             b_input_ids, b_input_mask, b_labels = batch

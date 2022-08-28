@@ -1,0 +1,1 @@
+google-chrome --remote-debugging-port=9515 --user-data-dir="/Desktop/josh/BERT-test/Tiktok-OCR/Chromestuff"

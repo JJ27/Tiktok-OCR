@@ -1,4 +1,6 @@
 import csv
+import os
+import sys
 import time
 from distutils.log import Log
 
@@ -175,6 +177,12 @@ async def printConsoleLogs():
             df.at[index, 'verifyid'] = row['id']
             if (index % 100 == 0):
                 df.to_csv("./progress/" + str(index) + ".csv")
+        except KeyboardInterrupt:
+            print("Interrupted")
+            try:
+                sys.exit(0)
+            except SystemExit:
+                os.exit(0)
         except:
             print("Error")
             continue

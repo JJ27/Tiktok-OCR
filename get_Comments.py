@@ -151,7 +151,7 @@ async def printConsoleLogs():
                         totalog += 5
                     totalog += 1
             for i, pred in enumerate(predictionsnew):
-                if (pred.numpy()[0] > 0.001):
+                if (pred.numpy()[0] > 0.0011):
                     if i == 0:
                         totalnew += 5
                     totalnew += 1
@@ -159,7 +159,7 @@ async def printConsoleLogs():
             totalnew = totalnew / (len(predictionsog) + 5)
             print("Totals: " + str(totalog) + " / " + str(totalnew))
             totals = [totalog, totalnew]
-            weights = [0.45, 0.55]
+            weights = [0.46, 0.54]
             total = numpy.average(totals, weights=weights)
             '''val = -1
             if(total > 0.35 and total < 0.65):
@@ -172,6 +172,7 @@ async def printConsoleLogs():
             df.at[index, 'labelog'] = totalog
             df.at[index, 'labelnew'] = totalnew
             df.at[index, 'label'] = total
+            df.at[index, 'verifyid'] = row['id']
             if (index % 100 == 0):
                 df.to_csv("./progress/" + str(index) + ".csv")
         except:

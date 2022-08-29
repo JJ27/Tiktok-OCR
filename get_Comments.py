@@ -41,9 +41,9 @@ async def printConsoleLogs():
             driver.get(row['webVideoUrl'])
             action_list = driver.find_elements(By.CLASS_NAME, "tiktok-1pqxj4k-ButtonActionItem")
             cmt_btn = action_list[1]
-            time.sleep(0.7)
+            time.sleep(0.4)
             cmt_btn.click()
-            time.sleep(0.7)
+            time.sleep(0.3)
             comments = (element.text for element in driver.find_elements(By.CLASS_NAME, "tiktok-q9aj5z-PCommentText"))
             comments = list(comments)
             input_ids = []

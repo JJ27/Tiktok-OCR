@@ -166,6 +166,6 @@ async def printConsoleLogs():
         else:
             val = 0
         row['label'] = val
-    pd.write_csv(df, 'data/test_labels.csv')
+    df.to_csv('model_results.csv')
 
 trio.run(printConsoleLogs)

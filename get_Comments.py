@@ -2,6 +2,7 @@ import csv
 import os
 import sys
 import time
+import traceback
 from distutils.log import Log
 
 import numpy
@@ -185,6 +186,7 @@ async def printConsoleLogs():
                 os.exit(0)
         except:
             print("Error")
+            traceback.print_exc()
             continue
     df.to_csv('final.csv')
 

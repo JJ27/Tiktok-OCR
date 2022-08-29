@@ -10,6 +10,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from torch.utils.data import TensorDataset, SequentialSampler, DataLoader
 import torch.nn.functional as F
 from importlib_metadata import version
+
 print(version('tokenizers'))
 from transformers import BertTokenizer, BertForSequenceClassification
 import trio
@@ -21,31 +22,36 @@ import pandas as pd
 import numpy as np
 
 d = DesiredCapabilities.CHROME
-d['goog:loggingPrefs'] = { 'browser':'ALL' }
+d['goog:loggingPrefs'] = {'browser': 'ALL'}
 
-#TODO: Hash the URLs, build the pipeline
+
+# TODO: Hash the URLs, build the pipeline
 
 async def printConsoleLogs():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_experimental_option('debuggerAddress', 'localhost:9515')
     driver = webdriver.Chrome(options=chrome_options, desired_capabilities=d)
     df = pd.read_csv('tiktok-metas.csv')
-    #df = df.reset_index(drop=True)
-    for index,row in tqdm(df.iterrows()):
-        driver.get(row['webVideoUrl'])
-        action_list = driver.find_elements(By.CLASS_NAME, "tiktok-1pqxj4k-ButtonActionItem")
-        cmt_btn = action_list[1]
-        cmt_btn.click()
-        time.sleep(1)
-        comments = (element.text for element in driver.find_elements(By.CLASS_NAME, "tiktok-q9aj5z-PCommentText"))
-        comments = list(comments)
+    # df = df.reset_index(drop=True)
+    for index, row in tqdm(df.iterrows()):
+        try:
+            driver.get(row['webVideoUrl'])
+            action_list = driver.find_elements(By.CLASS_NAME, "tiktok-1pqxj4k-ButtonActionItem")
+            cmt_btn = action_list[1]
+            cmt_btn.click()
+            time.sleep(1)
+            comments = (element.text for element in driver.find_elements(By.CLASS_NAME, "tiktok-q9aj5z-PCommentText"))
+            comments = list(comments)
+        except:
+            print("Selenium Error")
+            continue
         input_ids = []
         attention_masks = []
         model_path = './model'
         tokenizer = BertTokenizer.from_pretrained('digitalepidemiologylab/covid-twitter-bert-v2', do_lower_case=True)
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         modelog = BertForSequenceClassification.from_pretrained("digitalepidemiologylab/covid-twitter-bert-v2",
-                                                              num_labels=2)
+                                                                num_labels=2)
         modelnew = BertForSequenceClassification.from_pretrained(model_path, num_labels=2)
         modelog.to(device)
         modelnew.to(device)
@@ -119,9 +125,9 @@ async def printConsoleLogs():
             with torch.no_grad():
                 # Forward pass, calculate logit predictions
                 outputsog = modelog(b_input_ids, token_type_ids=None,
-                                attention_mask=b_input_mask)
-                outputsnew = modelnew(b_input_ids, token_type_ids=None,
                                     attention_mask=b_input_mask)
+                outputsnew = modelnew(b_input_ids, token_type_ids=None,
+                                      attention_mask=b_input_mask)
 
             logitsog = outputsog[0]
             logitsnew = outputsnew[0]
@@ -132,23 +138,23 @@ async def printConsoleLogs():
             label_ids = b_labels.to('cpu').numpy()
 
             for prediction in F.softmax(torch.from_numpy(logitsog), dim=-1):
-                #predictions.append(label_list[prediction])
+                # predictions.append(label_list[prediction])
                 predictionsog.append(prediction)
             for prediction in F.softmax(torch.from_numpy(logitsnew), dim=-1):
-                #predictions.append(label_list[prediction])
+                # predictions.append(label_list[prediction])
                 predictionsnew.append(prediction)
 
             # Store predictions and true labels
-            #predictions.append(logits)
+            # predictions.append(logits)
             true_labels.append(label_ids)
-        totalog, totalnew = 0,0
-        for i,pred in enumerate(predictionsog):
-            if(pred.numpy()[0] > 0.55):
+        totalog, totalnew = 0, 0
+        for i, pred in enumerate(predictionsog):
+            if (pred.numpy()[0] > 0.55):
                 if i == 0:
                     totalog += 5
                 totalog += 1
-        for i,pred in enumerate(predictionsnew):
-            if(pred.numpy()[0] > 0.001):
+        for i, pred in enumerate(predictionsnew):
+            if (pred.numpy()[0] > 0.001):
                 if i == 0:
                     totalnew += 5
                 totalnew += 1
@@ -169,8 +175,9 @@ async def printConsoleLogs():
         df.at[index, 'labelog'] = totalog
         df.at[index, 'labelnew'] = totalnew
         df.at[index, 'label'] = total
-        if(index % 100 == 0):
+        if (index % 100 == 0):
             df.to_csv("./progress/" + str(index) + ".csv")
     df.to_csv('final.csv')
+
 
 trio.run(printConsoleLogs)

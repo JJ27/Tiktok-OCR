@@ -30,7 +30,7 @@ async def printConsoleLogs():
     chrome_options.add_experimental_option('debuggerAddress', 'localhost:9515')
     driver = webdriver.Chrome(options=chrome_options, desired_capabilities=d)
     df = pd.read_csv('tiktok-metas.csv')
-    df = df.reset_index(drop=True)
+    #df = df.reset_index(drop=True)
     for index,row in tqdm(df.iterrows()):
         driver.get(row['webVideoUrl'])
         action_list = driver.find_elements(By.CLASS_NAME, "tiktok-1pqxj4k-ButtonActionItem")
@@ -156,16 +156,19 @@ async def printConsoleLogs():
         totalnew = totalnew / (len(predictionsog) + 5)
         print("Totals: " + str(totalog) + " / " + str(totalnew))
         totals = [totalog, totalnew]
-        weights = [0.6, 0.4]
+        weights = [0.45, 0.55]
         total = numpy.average(totals, weights=weights)
-        val = -1
+        '''val = -1
         if(total > 0.35 and total < 0.65):
             val = 1
         elif(total > 0.65):
             val = 2
         else:
             val = 0
-        row['label'] = val
-    df.to_csv('model_results.csv')
+        row['label'] = val'''
+        df.at[index, 'label'] = total
+        #if(index % 100 == 0):
+        df.to_csv("./progress/" + str(index) + ".csv")
+    df.to_csv('final.csv')
 
 trio.run(printConsoleLogs)

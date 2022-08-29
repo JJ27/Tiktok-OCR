@@ -169,8 +169,8 @@ async def printConsoleLogs():
         df.at[index, 'labelog'] = totalog
         df.at[index, 'labelnew'] = totalnew
         df.at[index, 'label'] = total
-        #if(index % 100 == 0):
-        df.to_csv("./progress/" + str(index) + ".csv")
+        if(index % 100 == 0):
+            df.to_csv("./progress/" + str(index) + ".csv")
     df.to_csv('final.csv')
 
 trio.run(printConsoleLogs)

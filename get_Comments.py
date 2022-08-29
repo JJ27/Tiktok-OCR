@@ -166,6 +166,8 @@ async def printConsoleLogs():
         else:
             val = 0
         row['label'] = val'''
+        df.at[index, 'labelog'] = totalog
+        df.at[index, 'labelnew'] = totalnew
         df.at[index, 'label'] = total
         #if(index % 100 == 0):
         df.to_csv("./progress/" + str(index) + ".csv")
